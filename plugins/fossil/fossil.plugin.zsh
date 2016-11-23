@@ -13,12 +13,12 @@ ZSH_THEME_FOSSIL_PROMPT_DIRTY=" %{$fg_bold[red]%}✖"
 ZSH_THEME_FOSSIL_PROMPT_CLEAN=" %{$fg_bold[green]%}✔"
 
 function fossil_prompt_info () {
-  local _OUTPUT=`fossil branch 2>&1`
-  local _STATUS=`echo $_OUTPUT | grep "use --repo"`
+  local _OUTPUT="$(command fossil branch 2>&1)"
+  local _STATUS="$(command echo $_OUTPUT | grep "use --repo")"
   if [ "$_STATUS" = "" ]; then
-    local _EDITED=`fossil changes`
+    local _EDITED="$(command fossil changes)"
     local _EDITED_SYM="$ZSH_THEME_FOSSIL_PROMPT_CLEAN"
-    local _BRANCH=`echo $_OUTPUT | grep "* " | sed 's/* //g'`
+    local _BRANCH="$(command echo $_OUTPUT | grep "* " | sed 's/* //g')"
 
     if [ "$_EDITED" != "" ]; then
       _EDITED_SYM="$ZSH_THEME_FOSSIL_PROMPT_DIRTY"
@@ -46,7 +46,7 @@ function _fossil () {
 
   case $state in
     command)
-      local _OUTPUT=`fossil branch 2>&1 | grep "use --repo"`
+      local _OUTPUT="$(command fossil branch 2>&1 | grep "use --repo")"
       if [ "$_OUTPUT" = "" ]; then
         compadd `_fossil_get_command_list`
       else
@@ -64,13 +64,13 @@ function _fossil () {
 }
 
 function _fossil_prompt () {
-  local current=`echo $PROMPT $RPROMPT | grep fossil`
+  local current="$(command echo $PROMPT $RPROMPT | grep fossil)"
 
   if [ "$_FOSSIL_PROMPT" = "" -o "$current" = "" ]; then
     local _prompt=${PROMPT}
     local _rprompt=${RPROMPT}
 
-    local is_prompt=`echo $PROMPT | grep git`
+    local is_prompt="$(command echo $PROMPT | grep git)"
 
     if [ "$is_prompt" = "" ]; then
       export RPROMPT="$_rprompt"'$(fossil_prompt_info)'
